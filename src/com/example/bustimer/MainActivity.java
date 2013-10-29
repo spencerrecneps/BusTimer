@@ -5,14 +5,15 @@ import android.app.Activity;
 import android.view.Menu;
 import android.view.View;
 import android.os.SystemClock;
-//import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Chronometer;
-//import android.content.Context;
+import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 import java.io.File;
-import java.io.Writer;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.lang.String;
 import java.util.Calendar;
 import java.util.Locale;
@@ -24,15 +25,9 @@ public class MainActivity extends Activity {
 	 */
 	private Chronometer chrono;
 	private TextView textState;
-//	private Button buttonStart;
-//	private Button buttonStop;
-//	private Button buttonMoving;
-//	private Button buttonBusStop;
-//	private Button buttonCongestionSlow;
-//	private Button buttonCongestionStop;
-//	private Button buttonTrafficLight;
 	private boolean running;
 	private File outFile;
+    BufferedWriter bw;
 	private static final String LOG_TAG = "Bus Timer";
 	
     @Override
@@ -46,15 +41,7 @@ public class MainActivity extends Activity {
         chrono = (Chronometer)findViewById(R.id.chrono);
         textState = (TextView)findViewById(R.id.textState);
         textState.setText(getResources().getString(R.string.moving));
-//        buttonStart = (Button)findViewById(R.id.buttonStart);
-//        buttonStop = (Button)findViewById(R.id.buttonStop);
-//        buttonMoving = (Button)findViewById(R.id.buttonMoving);
-//        buttonBusStop = (Button)findViewById(R.id.buttonBusStop);
-//        buttonCongestionSlow = (Button)findViewById(R.id.buttonCongestionSlow);
-//        buttonCongestionStop = (Button)findViewById(R.id.buttonCongestionStop);
-//        buttonTrafficLight = (Button)findViewById(R.id.buttonTrafficLight);
         running = false;
-//        outFile = getFileLocation(null,"date");
     }
 
 
@@ -104,9 +91,24 @@ public class MainActivity extends Activity {
      * Start the timer
      */
     public void timerStart (View view) {
+    	//check for external storage
+    	if (!this.isExternalStorageWritable()) {
+    		this.displayError("Could not find external storage for writing");
+    		return;
+    	}
+    	
+    	//check if clock is already running
     	if (running == false) {
-    		outFile = this.getFileLocation(this.getFileName());
-    		FileWriter fw = FileWriter(outFile);
+    		try {
+    			outFile = this.getFileLocation(this.getFileName());
+    			bw = new BufferedWriter(new FileWriter(outFile));
+    			bw.write("started");
+    		}
+    		catch (Exception e) {
+    			e.printStackTrace();
+    		}
+
+    		//start the clock and set running to true
     		chrono.setBase(SystemClock.elapsedRealtime());
     		chrono.start();
     		running = true;
@@ -119,6 +121,12 @@ public class MainActivity extends Activity {
     public void timerStop (View view) {
     	if (running == true) {
     		chrono.stop();
+    		try {
+    			bw.close();
+    		}
+    		catch (Exception e) {
+    			e.printStackTrace();
+    		}
     		running = false;
     	}
     }
@@ -138,7 +146,9 @@ public class MainActivity extends Activity {
         		Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
         		fileName
         		);
+        this.displayError("Could not create output file");
         if (!file.mkdirs()) {
+        	this.displayError("Could not create output file");
             Log.e(LOG_TAG, "Directory not created");
         }
         return file;
@@ -148,5 +158,12 @@ public class MainActivity extends Activity {
     	Calendar rightNow = Calendar.getInstance();
     	SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MMDD_HHmmss", Locale.US); 
     	return sdf.format(rightNow);
+    }
+    
+    public void displayError(CharSequence text) {
+    	Context context = getApplicationContext();
+    	int duration = Toast.LENGTH_SHORT;
+    	Toast toast = Toast.makeText(context, text, duration);
+    	toast.show();
     }
 }
