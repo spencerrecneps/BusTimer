@@ -14,6 +14,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.String;
 import java.util.Calendar;
 import java.util.Locale;
@@ -25,6 +26,7 @@ public class MainActivity extends Activity {
 	 */
 	private Chronometer chrono;
 	private TextView textState;
+	Calendar rightNow = Calendar.getInstance();
 	private boolean running;
 	private File outFile;
     BufferedWriter bw;
@@ -56,35 +58,60 @@ public class MainActivity extends Activity {
      * Bus is moving
      */
     public void timerMoving (View view) {
-    	textState.setText(getResources().getString(R.string.moving));
+    	String buttonText = getResources().getString(R.string.moving);
+    	if (running) {
+    		this.writeEntry(buttonText);
+    	}
+    	textState.setText(buttonText);
+    	return;
     }
     
     /*
      * Bus is stopped at a stop
      */
     public void timerBusStop (View view) {
-    	textState.setText(getResources().getString(R.string.bus_stop));
+    	String buttonText = getResources().getString(R.string.bus_stop);
+    	if (running) {
+    		this.writeEntry(buttonText);
+    	}
+		textState.setText(buttonText);
+		return;
     }
     
     /*
      * Bus is stopped at a traffic light
      */
     public void timerTrafficLight (View view) {
-    	textState.setText(getResources().getString(R.string.traffic_light));
+    	String buttonText = getResources().getString(R.string.traffic_light);
+    	if (running) {
+    		this.writeEntry(buttonText);
+    	}
+    	textState.setText(buttonText);
+    	return;
     }
     
     /*
      * Bus is slowed by congestion
      */
     public void timerCongestionSlow (View view) {
-    	textState.setText(getResources().getString(R.string.congestion_slow));
+    	String buttonText = getResources().getString(R.string.congestion_slow);
+    	if (running) {
+    		this.writeEntry(buttonText);
+    	}
+    	textState.setText(buttonText);
+    	return;
     }
     
     /*
      * Bus is stopped in congestion
      */
     public void timerCongestionStop (View view) {
-    	textState.setText(getResources().getString(R.string.congestion_stop));
+    	String buttonText = getResources().getString(R.string.congestion_stop);
+    	if (running) {
+    		this.writeEntry(buttonText);
+    	}
+    	textState.setText(buttonText);
+    	return;
     }
     
     /*
@@ -102,16 +129,21 @@ public class MainActivity extends Activity {
     		try {
     			outFile = this.getFileLocation(this.getFileName());
     			bw = new BufferedWriter(new FileWriter(outFile));
-    			bw.write("started");
+    			bw.write("timestamp;lat;lon;travel_condition\n");
+    	    	this.writeEntry(textState.getText().toString());
     		}
     		catch (Exception e) {
     			e.printStackTrace();
+    			return;
     		}
 
     		//start the clock and set running to true
     		chrono.setBase(SystemClock.elapsedRealtime());
     		chrono.start();
     		running = true;
+    	}
+    	else {
+    		this.displayError("The timer is already running");
     	}
     }
     
@@ -141,23 +173,18 @@ public class MainActivity extends Activity {
     }
     
     public File getFileLocation(String fileName) {
-        // Get the directory for the app's private pictures directory. 
-        File file = new File(
-        		Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-        		fileName
-        		);
-        this.displayError("Could not create output file");
-        if (!file.mkdirs()) {
-        	this.displayError("Could not create output file");
+    	File dir = new File(Environment.getExternalStorageDirectory(),"BusTimer");
+    	if (!dir.exists() && !dir.mkdirs()) {
+    		this.displayError("Could not create output file");
             Log.e(LOG_TAG, "Directory not created");
-        }
+    	}
+    	File file = new File(dir,fileName.concat(".txt"));
         return file;
     }
     
     public String getFileName() {
-    	Calendar rightNow = Calendar.getInstance();
-    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MMDD_HHmmss", Locale.US); 
-    	return sdf.format(rightNow);
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MMdd_HHmmss", Locale.US); 
+    	return sdf.format(rightNow.getTime());
     }
     
     public void displayError(CharSequence text) {
@@ -165,5 +192,20 @@ public class MainActivity extends Activity {
     	int duration = Toast.LENGTH_SHORT;
     	Toast toast = Toast.makeText(context, text, duration);
     	toast.show();
+    }
+    
+    public void writeEntry(String state) {
+    	try {
+    		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SS", Locale.US);
+        	bw.write(sdf.format(rightNow.getTime()));
+        	bw.write(";0;0;");
+        	bw.write(state);
+        	bw.write("\n");
+    	}
+    	catch (IOException e) {
+    		this.displayError("Could not register input");
+    		Log.e(LOG_TAG, "write exception");
+    	}
+    	return;
     }
 }
