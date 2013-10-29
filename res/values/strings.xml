@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Bus Timer</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="moving">Moving</string>
+    <string name="bus_stop">Bus Stop</string>
+    <string name="congestion_slow">Congestion - Slowed</string>
+    <string name="traffic_light">Traffic Light</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="stopwatch">%s</string>
+    <string name="congestion_stop">Congestion - Stopped</string>
+
+</resources>
