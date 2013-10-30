@@ -26,7 +26,6 @@ public class MainActivity extends Activity {
 	 */
 	private Chronometer chrono;
 	private TextView textState;
-	Calendar rightNow = Calendar.getInstance();
 	private boolean running;
 	private File outFile;
     BufferedWriter bw;
@@ -153,6 +152,7 @@ public class MainActivity extends Activity {
     public void timerStop (View view) {
     	if (running == true) {
     		chrono.stop();
+    		this.writeEntry("end");
     		try {
     			bw.close();
     		}
@@ -183,6 +183,7 @@ public class MainActivity extends Activity {
     }
     
     public String getFileName() {
+    	Calendar rightNow = Calendar.getInstance();
     	SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MMdd_HHmmss", Locale.US); 
     	return sdf.format(rightNow.getTime());
     }
@@ -196,6 +197,7 @@ public class MainActivity extends Activity {
     
     public void writeEntry(String state) {
     	try {
+    		Calendar rightNow = Calendar.getInstance();
     		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SS", Locale.US);
         	bw.write(sdf.format(rightNow.getTime()));
         	bw.write(";0;0;");
