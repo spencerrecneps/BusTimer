@@ -11,6 +11,7 @@ import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
+import android.location.*;
 import java.io.File;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -30,6 +31,7 @@ public class MainActivity extends Activity {
 	private File outFile;
     BufferedWriter bw;
 	private static final String LOG_TAG = "Bus Timer";
+	LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +54,27 @@ public class MainActivity extends Activity {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+    
+    // Acquire a reference to the system Location Manager
+    
+
+    // Define a listener that responds to location updates
+    LocationListener locationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+          // Called when a new location is found by the network location provider.
+//          makeUseOfNewLocation(location);
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+        public void onProviderEnabled(String provider) {}
+
+        public void onProviderDisabled(String provider) {}
+      };
+
+    // Register the listener with the Location Manager to receive location updates
+//    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+    
     
     /*
      * Bus is moving
@@ -210,4 +233,6 @@ public class MainActivity extends Activity {
     	}
     	return;
     }
+    
+    
 }
