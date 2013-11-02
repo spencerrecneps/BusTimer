@@ -9,20 +9,20 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-    <Chronometer
-        android:id="@+id/chrono"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="46sp"
-        android:format="@string/stopwatch" />
-    
-   	<TextView
+    <TextView
    	    android:id="@+id/textState"
    	    android:layout_width="wrap_content"
        	android:layout_height="wrap_content"
        	android:text="@string/congestion_stop"
        	android:layout_marginTop="0dp"
-       	android:textSize="24sp" />
+       	android:textSize="26sp" />
+    
+    <Chronometer
+        android:id="@+id/chrono"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:format="@string/stopwatch" />
 
     <Button
         android:id="@+id/buttonMoving"
