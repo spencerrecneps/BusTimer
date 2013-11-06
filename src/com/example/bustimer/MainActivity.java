@@ -11,7 +11,6 @@ import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
-import android.location.*;
 import java.io.File;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -31,7 +30,7 @@ public class MainActivity extends Activity {
 	private File outFile;
     BufferedWriter bw;
 	private static final String LOG_TAG = "Bus Timer";
-	LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+	GPSTracker gps;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +44,14 @@ public class MainActivity extends Activity {
         textState = (TextView)findViewById(R.id.textState);
         textState.setText(getResources().getString(R.string.moving));
         running = false;
+        
+        gps = new GPSTracker(MainActivity.this); 	// set up gps tracker
+        
+        //test gps connection and prompt to enable if applicable
+        if (!gps.canGetLocation()) {
+        	gps.showSettingsAlert();
+        }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -54,27 +59,6 @@ public class MainActivity extends Activity {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-    
-    // Acquire a reference to the system Location Manager
-    
-
-    // Define a listener that responds to location updates
-    LocationListener locationListener = new LocationListener() {
-        public void onLocationChanged(Location location) {
-          // Called when a new location is found by the network location provider.
-//          makeUseOfNewLocation(location);
-        }
-
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-        public void onProviderEnabled(String provider) {}
-
-        public void onProviderDisabled(String provider) {}
-      };
-
-    // Register the listener with the Location Manager to receive location updates
-//    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-    
     
     /*
      * Bus is moving
@@ -151,7 +135,7 @@ public class MainActivity extends Activity {
     		try {
     			outFile = this.getFileLocation(this.getFileName());
     			bw = new BufferedWriter(new FileWriter(outFile));
-    			bw.write("timestamp;lat;lon;travel_condition\n");
+    			bw.write("timestamp;lon;lat;travel_condition\n");
     	    	this.writeEntry(textState.getText().toString());
     		}
     		catch (Exception e) {
@@ -223,7 +207,11 @@ public class MainActivity extends Activity {
     		Calendar rightNow = Calendar.getInstance();
     		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SS", Locale.US);
         	bw.write(sdf.format(rightNow.getTime()));
-        	bw.write(";0;0;");
+      		bw.write(";");
+       		bw.write(String.valueOf(gps.getLongitude()));
+       		bw.write(";");
+       		bw.write(String.valueOf(gps.getLatitude()));
+       		bw.write(";");
         	bw.write(state);
         	bw.write("\n");
     	}

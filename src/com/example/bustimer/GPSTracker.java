@@ -1,3 +1,7 @@
+/*
+ * code from
+ * http://www.androidhive.info/2012/07/android-gps-location-manager-tutorial/
+ */
 package com.example.bustimer;
 
 import android.app.AlertDialog;
@@ -29,12 +33,14 @@ public class GPSTracker extends Service implements LocationListener {
     Location location; // location
     double latitude; // latitude
     double longitude; // longitude
+    
+    private static final String LOG_TAG = "GPS Tracker";
  
     // The minimum distance to change Updates in meters
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 5; // 5 meters
  
     // The minimum time between updates in milliseconds
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 10 * 1; // 10 seconds
  
     // Declaring a Location Manager
     protected LocationManager locationManager;
@@ -48,7 +54,7 @@ public class GPSTracker extends Service implements LocationListener {
         try {
             locationManager = (LocationManager) mContext
                     .getSystemService(LOCATION_SERVICE);
- 
+            
             // getting GPS status
             isGPSEnabled = locationManager
                     .isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -154,7 +160,7 @@ public class GPSTracker extends Service implements LocationListener {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
       
         // Setting Dialog Title
-        alertDialog.setTitle("GPS is settings");
+        alertDialog.setTitle("GPS Settings");
   
         // Setting Dialog Message
         alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
