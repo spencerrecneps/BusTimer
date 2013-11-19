@@ -1,8 +1,9 @@
 package com.example.bustimer;
-
+//right now i'm stuck trying to get gps to turn off
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.os.SystemClock;
 import android.widget.TextView;
@@ -30,7 +31,7 @@ public class MainActivity extends Activity {
 	private File outFile;
     BufferedWriter bw;
 	private static final String LOG_TAG = "Bus Timer";
-	GPSTracker gps;
+	private GPSTracker gps;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,7 @@ public class MainActivity extends Activity {
         
         gps = new GPSTracker(MainActivity.this); 	// set up gps tracker
         
-        //test gps connection and prompt to enable if applicable
+        //test gps connection and prompt to enable if disabled
         if (!gps.canGetLocation()) {
         	gps.showSettingsAlert();
         }
@@ -58,6 +59,35 @@ public class MainActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.app_quit:
+            	//gps = null;
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    
+    
+    @Override
+    protected void onPause() {
+    	gps.stopUsingGPS();
+    	super.onPause();
+    }
+    
+    @Override
+    protected void onResume() {
+    	gps.getLocation();
+    	if (!gps.canGetLocation()) {
+        	gps.showSettingsAlert();
+        }
+    	super.onResume();
     }
     
     /*
