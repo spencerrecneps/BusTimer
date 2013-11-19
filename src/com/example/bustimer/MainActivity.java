@@ -9,6 +9,7 @@ import android.view.WindowManager;
 import android.os.SystemClock;
 import android.widget.TextView;
 import android.widget.Chronometer;
+import android.widget.Switch;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
@@ -28,7 +29,9 @@ public class MainActivity extends Activity {
 	 */
 	private Chronometer chrono;
 	private TextView textState;
+	private Switch directionSwitch;
 	private boolean running;
+	private boolean direction;
 	private File outFile;
     BufferedWriter bw;
 	private static final String LOG_TAG = "Bus Timer";
@@ -45,6 +48,8 @@ public class MainActivity extends Activity {
         chrono = (Chronometer)findViewById(R.id.chrono);
         textState = (TextView)findViewById(R.id.textState);
         textState.setText(getResources().getString(R.string.moving));
+        directionSwitch = (Switch)findViewById(R.id.switchbutton);
+        direction = false;		//false = nb/eb
         running = false;
         
         gps = new GPSTracker(MainActivity.this); 	// set up gps tracker
@@ -91,10 +96,17 @@ public class MainActivity extends Activity {
     	super.onResume();
     }
     
-    /*
-     * Bus is moving
-     */
+    public void onSwitchClicked (View view) {
+    	/*
+    	 * Change direction
+    	 */
+    	direction = directionSwitch.isChecked();  
+    }
+    
     public void timerMoving (View view) {
+        /*
+         * Bus is moving
+         */
     	String buttonText = getResources().getString(R.string.moving);
     	if (running) {
     		this.writeEntry(buttonText);
@@ -103,10 +115,10 @@ public class MainActivity extends Activity {
     	return;
     }
     
-    /*
-     * Bus is stopped at a stop
-     */
     public void timerBusStop (View view) {
+        /*
+         * Bus is stopped at a stop
+         */
     	String buttonText = getResources().getString(R.string.bus_stop);
     	if (running) {
     		this.writeEntry(buttonText);
@@ -115,10 +127,10 @@ public class MainActivity extends Activity {
 		return;
     }
     
-    /*
-     * Bus is stopped at a traffic light
-     */
     public void timerTrafficLight (View view) {
+        /*
+         * Bus is stopped at a traffic light
+         */
     	String buttonText = getResources().getString(R.string.traffic_light);
     	if (running) {
     		this.writeEntry(buttonText);
@@ -127,10 +139,10 @@ public class MainActivity extends Activity {
     	return;
     }
     
-    /*
-     * Bus is slowed by congestion
-     */
     public void timerCongestionSlow (View view) {
+        /*
+         * Bus is slowed by congestion
+         */
     	String buttonText = getResources().getString(R.string.congestion_slow);
     	if (running) {
     		this.writeEntry(buttonText);
@@ -139,10 +151,10 @@ public class MainActivity extends Activity {
     	return;
     }
     
-    /*
-     * Bus is stopped in congestion
-     */
     public void timerCongestionStop (View view) {
+        /*
+         * Bus is stopped in congestion
+         */
     	String buttonText = getResources().getString(R.string.congestion_stop);
     	if (running) {
     		this.writeEntry(buttonText);
@@ -151,10 +163,11 @@ public class MainActivity extends Activity {
     	return;
     }
     
-    /*
-     * Start the timer
-     */
     public void timerStart (View view) {
+        /*
+         * Start the timer
+         */
+    	
     	//check for external storage
     	if (!this.isExternalStorageWritable()) {
     		this.displayError("Could not find external storage for writing");
@@ -167,7 +180,7 @@ public class MainActivity extends Activity {
     		try {
     			outFile = this.getFileLocation(this.getFileName());
     			bw = new BufferedWriter(new FileWriter(outFile));
-    			bw.write("timestamp;lon;lat;travel_condition\n");
+    			bw.write("timestamp;lon;lat;travel_condition;direction\n");
     	    	this.writeEntry(textState.getText().toString());
     		}
     		catch (Exception e) {
@@ -185,10 +198,10 @@ public class MainActivity extends Activity {
     	}
     }
     
-    /*
-     * Stop the timer
-     */
     public void timerStop (View view) {
+        /*
+         * Stop the timer
+         */
     	if (running == true) {
     		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     		chrono.stop();
@@ -246,6 +259,13 @@ public class MainActivity extends Activity {
        		bw.write(String.valueOf(gps.getLatitude()));
        		bw.write(";");
         	bw.write(state);
+        	bw.write(";");
+        	if (direction) {	// false = nb/eb
+        		bw.write("sb/wb");
+        	}
+        	else {
+        		bw.write("nb/eb");
+        	}
         	bw.write("\n");
     	}
     	catch (IOException e) {
