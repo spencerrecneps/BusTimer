@@ -30,6 +30,7 @@ public class MainActivity extends Activity {
 	private File outFile;
     BufferedWriter bw;
 	private static final String LOG_TAG = "Bus Timer";
+	GPSTracker gps;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +44,14 @@ public class MainActivity extends Activity {
         textState = (TextView)findViewById(R.id.textState);
         textState.setText(getResources().getString(R.string.moving));
         running = false;
+        
+        gps = new GPSTracker(MainActivity.this); 	// set up gps tracker
+        
+        //test gps connection and prompt to enable if applicable
+        if (!gps.canGetLocation()) {
+        	gps.showSettingsAlert();
+        }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -128,7 +135,7 @@ public class MainActivity extends Activity {
     		try {
     			outFile = this.getFileLocation(this.getFileName());
     			bw = new BufferedWriter(new FileWriter(outFile));
-    			bw.write("timestamp;lat;lon;travel_condition\n");
+    			bw.write("timestamp;lon;lat;travel_condition\n");
     	    	this.writeEntry(textState.getText().toString());
     		}
     		catch (Exception e) {
@@ -200,7 +207,11 @@ public class MainActivity extends Activity {
     		Calendar rightNow = Calendar.getInstance();
     		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SS", Locale.US);
         	bw.write(sdf.format(rightNow.getTime()));
-        	bw.write(";0;0;");
+      		bw.write(";");
+       		bw.write(String.valueOf(gps.getLongitude()));
+       		bw.write(";");
+       		bw.write(String.valueOf(gps.getLatitude()));
+       		bw.write(";");
         	bw.write(state);
         	bw.write("\n");
     	}
@@ -210,4 +221,6 @@ public class MainActivity extends Activity {
     	}
     	return;
     }
+    
+    
 }
