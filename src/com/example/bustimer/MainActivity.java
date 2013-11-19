@@ -8,6 +8,7 @@ import android.view.View;
 import android.os.SystemClock;
 import android.widget.TextView;
 import android.widget.Chronometer;
+import android.widget.Switch;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
@@ -27,7 +28,9 @@ public class MainActivity extends Activity {
 	 */
 	private Chronometer chrono;
 	private TextView textState;
+	private Switch directionSwitch;
 	private boolean running;
+	private boolean direction;
 	private File outFile;
     BufferedWriter bw;
 	private static final String LOG_TAG = "Bus Timer";
@@ -44,6 +47,8 @@ public class MainActivity extends Activity {
         chrono = (Chronometer)findViewById(R.id.chrono);
         textState = (TextView)findViewById(R.id.textState);
         textState.setText(getResources().getString(R.string.moving));
+        directionSwitch = (Switch)findViewById(R.id.switchbutton);
+        direction = false;		//false = nb/eb
         running = false;
         
         gps = new GPSTracker(MainActivity.this); 	// set up gps tracker
@@ -94,7 +99,7 @@ public class MainActivity extends Activity {
     	/*
     	 * Change direction
     	 */
-    	
+    	direction = directionSwitch.isChecked();  
     }
     
     public void timerMoving (View view) {
@@ -173,7 +178,7 @@ public class MainActivity extends Activity {
     		try {
     			outFile = this.getFileLocation(this.getFileName());
     			bw = new BufferedWriter(new FileWriter(outFile));
-    			bw.write("timestamp;lon;lat;travel_condition\n");
+    			bw.write("timestamp;lon;lat;travel_condition;direction\n");
     	    	this.writeEntry(textState.getText().toString());
     		}
     		catch (Exception e) {
@@ -251,6 +256,13 @@ public class MainActivity extends Activity {
        		bw.write(String.valueOf(gps.getLatitude()));
        		bw.write(";");
         	bw.write(state);
+        	bw.write(";");
+        	if (direction) {	// false = nb/eb
+        		bw.write("sb/wb");
+        	}
+        	else {
+        		bw.write("nb/eb");
+        	}
         	bw.write("\n");
     	}
     	catch (IOException e) {

@@ -32,7 +32,7 @@
             android:textSize="22sp" />
 
         <Switch
-            android:id="@+id/togglebutton"
+            android:id="@+id/switchbutton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
