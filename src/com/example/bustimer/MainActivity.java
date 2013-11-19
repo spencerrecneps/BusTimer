@@ -90,10 +90,17 @@ public class MainActivity extends Activity {
     	super.onResume();
     }
     
-    /*
-     * Bus is moving
-     */
+    public void onSwitchClicked (View view) {
+    	/*
+    	 * Change direction
+    	 */
+    	
+    }
+    
     public void timerMoving (View view) {
+        /*
+         * Bus is moving
+         */
     	String buttonText = getResources().getString(R.string.moving);
     	if (running) {
     		this.writeEntry(buttonText);
@@ -102,10 +109,10 @@ public class MainActivity extends Activity {
     	return;
     }
     
-    /*
-     * Bus is stopped at a stop
-     */
     public void timerBusStop (View view) {
+        /*
+         * Bus is stopped at a stop
+         */
     	String buttonText = getResources().getString(R.string.bus_stop);
     	if (running) {
     		this.writeEntry(buttonText);
@@ -114,10 +121,10 @@ public class MainActivity extends Activity {
 		return;
     }
     
-    /*
-     * Bus is stopped at a traffic light
-     */
     public void timerTrafficLight (View view) {
+        /*
+         * Bus is stopped at a traffic light
+         */
     	String buttonText = getResources().getString(R.string.traffic_light);
     	if (running) {
     		this.writeEntry(buttonText);
@@ -126,10 +133,10 @@ public class MainActivity extends Activity {
     	return;
     }
     
-    /*
-     * Bus is slowed by congestion
-     */
     public void timerCongestionSlow (View view) {
+        /*
+         * Bus is slowed by congestion
+         */
     	String buttonText = getResources().getString(R.string.congestion_slow);
     	if (running) {
     		this.writeEntry(buttonText);
@@ -138,10 +145,10 @@ public class MainActivity extends Activity {
     	return;
     }
     
-    /*
-     * Bus is stopped in congestion
-     */
     public void timerCongestionStop (View view) {
+        /*
+         * Bus is stopped in congestion
+         */
     	String buttonText = getResources().getString(R.string.congestion_stop);
     	if (running) {
     		this.writeEntry(buttonText);
@@ -150,10 +157,11 @@ public class MainActivity extends Activity {
     	return;
     }
     
-    /*
-     * Start the timer
-     */
     public void timerStart (View view) {
+        /*
+         * Start the timer
+         */
+    	
     	//check for external storage
     	if (!this.isExternalStorageWritable()) {
     		this.displayError("Could not find external storage for writing");
@@ -183,10 +191,10 @@ public class MainActivity extends Activity {
     	}
     }
     
-    /*
-     * Stop the timer
-     */
     public void timerStop (View view) {
+        /*
+         * Stop the timer
+         */
     	if (running == true) {
     		chrono.stop();
     		this.writeEntry("end");
