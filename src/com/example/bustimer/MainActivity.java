@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.os.SystemClock;
 import android.widget.TextView;
 import android.widget.Chronometer;
@@ -162,6 +163,7 @@ public class MainActivity extends Activity {
     	
     	//check if clock is already running
     	if (running == false) {
+    		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     		try {
     			outFile = this.getFileLocation(this.getFileName());
     			bw = new BufferedWriter(new FileWriter(outFile));
@@ -188,6 +190,7 @@ public class MainActivity extends Activity {
      */
     public void timerStop (View view) {
     	if (running == true) {
+    		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     		chrono.stop();
     		this.writeEntry("end");
     		try {
