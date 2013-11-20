@@ -52,12 +52,13 @@ public class MainActivity extends Activity {
         direction = false;		//false = nb/eb
         running = false;
         
-        gps = new GPSTracker(MainActivity.this); 	// set up gps tracker
+        //gps = new GPSTracker(MainActivity.this); 	// set up gps tracker
         
         //test gps connection and prompt to enable if disabled
+        /*
         if (!gps.canGetLocation()) {
         	gps.showSettingsAlert();
-        }
+        }*/
     }
 
     @Override
@@ -80,7 +81,7 @@ public class MainActivity extends Activity {
         }
     }
     
-    
+    /*
     @Override
     protected void onPause() {
     	gps.stopUsingGPS();
@@ -94,7 +95,7 @@ public class MainActivity extends Activity {
         	gps.showSettingsAlert();
         }
     	super.onResume();
-    }
+    }*/
     
     public void onSwitchClicked (View view) {
     	/*
@@ -254,10 +255,10 @@ public class MainActivity extends Activity {
     		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SS", Locale.US);
         	bw.write(sdf.format(rightNow.getTime()));
       		bw.write(";");
-       		bw.write(String.valueOf(gps.getLongitude()));
-       		bw.write(";");
-       		bw.write(String.valueOf(gps.getLatitude()));
-       		bw.write(";");
+       		//bw.write(String.valueOf(gps.getLongitude()));
+       		bw.write("0;");
+       		//bw.write(String.valueOf(gps.getLatitude()));
+       		bw.write("0;");
         	bw.write(state);
         	bw.write(";");
         	if (direction) {	// false = nb/eb
